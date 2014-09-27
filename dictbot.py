@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 
 
 def get_translation(word):
+    #using the widget for a simple usage
     payload = { 'ddict':  'ende', 'search': str(word),
              'h': '200', 'w': '200'}
     r = requests.post("http://en.bab.la/widgets/dict.php", data=payload)
@@ -16,6 +17,7 @@ def get_translation(word):
         return '[no translation found for '+str(word)+']'
 
     word = results.div.a
+    #whichever words are in strong are the ones searched for
     if word.strong != None:
         return soup.find('td', {'class': 'lang2'}).div.a.text
     else:
@@ -28,11 +30,13 @@ class TranslateBot(irc.IRCClient):
 
     def signedOn(self):
         self.join('##deutsch')
-    def privmsg(self, user, channel, msg):
-        msg = re.compile(self.nickname + "[:,]* ?", re.I).sub('',msg)
+
+    def privmsg(self, user, channel, raw_msg):
+        msg = re.compile(self.nickname + "[:,]* ?", re.I).sub('',raw_msg)
         if msg[0] == '!':
             print msg
             self.msg(channel, get_translation(msg[1:]).encode('utf-8'))
+
     def joined(self, channel):
         print ("Joined " +channel)
 
