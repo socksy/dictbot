@@ -27,13 +27,12 @@ class TranslateBot(irc.IRCClient):
     nickname = property(_get_nickname)
 
     def signedOn(self):
-        self.join('#stacs2')
+        self.join('##deutsch')
     def privmsg(self, user, channel, msg):
-        print msg
         msg = re.compile(self.nickname + "[:,]* ?", re.I).sub('',msg)
-        print msg
         if msg[0] == '!':
-            self.msg(channel, str(get_translation(msg[1:])))
+            print msg
+            self.msg(channel, get_translation(msg[1:]).encode('utf-8'))
     def joined(self, channel):
         print ("Joined " +channel)
 
