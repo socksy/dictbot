@@ -45,8 +45,8 @@ class TranslateBot(irc.IRCClient):
         self.join('##deutsch')
 
     def privmsg(self, user, channel, raw_msg):
-        msg = re.compile(self.nickname + "[:,]* ?", re.I).sub('',raw_msg)
-        if msg[0] == '!':
+        if msg[0] == '!' or self.nickname in raw_msg:
+            msg = re.sub(self.nickname + "[:,]? ?", '', raw_msg)
             print msg
             if msg.startswith('!de'):
                 direction = "deen"
