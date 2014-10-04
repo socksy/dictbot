@@ -42,10 +42,10 @@ class TranslateBot(irc.IRCClient):
     nickname = property(_get_nickname)
 
     def signedOn(self):
-        self.join('##deutsch')
+        self.join('#stacs2')
 
     def privmsg(self, user, channel, raw_msg):
-        if msg[0] == '!' or self.nickname in raw_msg:
+        if raw_msg[0] == '!' or self.nickname in raw_msg:
             msg = re.sub(self.nickname + "[:,]? ?", '', raw_msg)
             print msg
             if msg.startswith('!de'):
@@ -54,7 +54,12 @@ class TranslateBot(irc.IRCClient):
                 direction = "ende"
             else:
                 direction = None
-            translatable = msg.split(' ')[1]
+            msgsplit = msg.split(' ')
+            if len(msgsplit) == 1:
+                translatable = msgsplit[0][1:]
+            else:
+                translatable = msgsplit[1]
+
             self.msg(channel, get_translation(translatable, direction).encode('utf-8'))
 
     def joined(self, channel):
