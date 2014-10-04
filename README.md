@@ -1,8 +1,18 @@
 #An irc bot for the denizens of ##deutsch
 
 ##Usage
-    you: !word
+NB the space for general tranlsation:
+
+    you: ! word
 	dictbot: wort
+
+For de->en, specify the direction with !deen
+
+	you: !deen mist
+
+And vice versa:
+
+	you !ende mist
 
 ##To run locally
 Change channel and nick in the code for testing purposes.
