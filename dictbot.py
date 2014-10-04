@@ -5,15 +5,27 @@ import re
 from bs4 import BeautifulSoup
 
 
-def get_translation(word):
+def get_translation(word, direction):
+    if direction is None:
+        undecided = True
+        direction = "ende"
+    else:
+        undecided = False
+
     #using the widget for a simple usage
-    payload = { 'ddict':  'ende', 'search': str(word),
+    payload = { 'ddict': direction, 'search': word,
              'h': '200', 'w': '200'}
     r = requests.post("http://en.bab.la/widgets/dict.php", data=payload)
 
     soup = BeautifulSoup(r.text)
-    results = soup.find_all('td', {'class': 'lang1'})
-    results += soup.find_all('td', {'class': 'lang2'})
+    if (not undecided) and (direction == "deen"):
+        results = soup.find_all('td', {'class': 'lang2'})
+    elif not undecided:
+        results = soup.find_all('td', {'class': 'lang2'})
+    else:
+        results = soup.find_all('td', {'class': 'lang1'})
+        results += soup.find_all('td', {'class': 'lang2'})
+
     if not results:
         return '[no translation found for '+str(word)+']'
 
@@ -36,7 +48,14 @@ class TranslateBot(irc.IRCClient):
         msg = re.compile(self.nickname + "[:,]* ?", re.I).sub('',raw_msg)
         if msg[0] == '!':
             print msg
-            self.msg(channel, get_translation(msg[1:]).encode('utf-8'))
+            if msg.startswith('!de'):
+                direction = "deen"
+            elif msg.startswith('!en'):
+                direction = "ende"
+            else:
+                direction = None
+            translatable = msg.split(' ')[1]
+            self.msg(channel, get_translation(translatable, direction).encode('utf-8'))
 
     def joined(self, channel):
         print ("Joined " +channel)
