@@ -42,7 +42,8 @@ class TranslateBot(irc.IRCClient):
     nickname = property(_get_nickname)
 
     def signedOn(self):
-        self.join('#stacs2')
+        self.join('##deutsch')
+        self.join('##deutsch-bot')
 
     def privmsg(self, user, channel, raw_msg):
         if raw_msg[0] == '!' or self.nickname in raw_msg:
@@ -56,7 +57,7 @@ class TranslateBot(irc.IRCClient):
                 direction = None
             msgsplit = msg.split(' ')
             if len(msgsplit) == 1:
-                translatable = msgsplit[0][1:]
+                translatable = msgsplit[0].replace('!','')
             else:
                 translatable = msgsplit[1]
 
