@@ -12,16 +12,17 @@ def get_translation(word):
     r = requests.post("http://en.bab.la/widgets/dict.php", data=payload)
 
     soup = BeautifulSoup(r.text)
-    results = soup.find('td', {'class': 'lang1'})
-    if results == None:
+    results = soup.find_all('td', {'class': 'lang1'})
+    results += soup.find_all('td', {'class': 'lang2'})
+    if not results:
         return '[no translation found for '+str(word)+']'
 
-    word = results.div.a
-    #whichever words are in strong are the ones searched for
-    if word.strong != None:
-        return soup.find('td', {'class': 'lang2'}).div.a.text
-    else:
-        return word.text
+    words = []
+    for word in results:
+        #whichever words are in strong are the ones searched for
+        if word.div.a.strong is None:
+            words.append(word.div.a.text)
+    return ', '.join(words)
 
 class TranslateBot(irc.IRCClient):
     def _get_nickname(self):
