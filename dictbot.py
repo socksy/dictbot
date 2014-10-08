@@ -46,7 +46,7 @@ class TranslateBot(irc.IRCClient):
         self.join('##deutsch-bot')
 
     def privmsg(self, user, channel, raw_msg):
-        if raw_msg[0] == '!' or self.nickname in raw_msg:
+        if raw_msg[0] == '!' or re.match("^.?"+self.nickname, raw_msg) != None:
             msg = re.sub(self.nickname + "[:,]? ?", '', raw_msg)
             print msg
             if msg.startswith('!de'):
