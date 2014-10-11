@@ -49,15 +49,21 @@ class TranslateBot(irc.IRCClient):
         if raw_msg[0] == '!' or re.match("^.?"+self.nickname, raw_msg) != None:
             msg = re.sub(self.nickname + "[:,]? ?", '', raw_msg)
             print msg
-            if msg.startswith('!de'):
+            if msg.startswith('!de '):
                 direction = "deen"
-            elif msg.startswith('!en'):
+            elif msg.startswith('!en '):
                 direction = "ende"
             else:
                 direction = None
+
             msgsplit = msg.split(' ')
+            if direction == None:
+                pos_direction = msgsplit[0][1:]
+                if re.match('[a-z][a-z][a-z][a-z]', pos_direction):
+                    direction = pos_direction
+
             if len(msgsplit) == 1:
-                translatable = msgsplit[0].replace('!','')
+                return
             else:
                 translatable = msgsplit[1]
 
